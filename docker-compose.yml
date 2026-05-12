@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  postgres-produits:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: produitsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-produits-data:/var/lib/postgresql/data
+
+  postgres-avis:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: avisdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-avis-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - '8761:8761'
+    depends_on:
+      - postgres-produits
+      - postgres-avis
+      - redis
+
+  produits-service:
+    build: ./produits-service
+    ports:
+      - '8091:8091'
+    depends_on:
+      - postgres-produits
+      - redis
+      - eureka-server
+
+  avis-service:
+    build: ./avis-service
+    ports:
+      - '8092:8092'
+    depends_on:
+      - postgres-avis
+      - eureka-server
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - '8090:8090'
+    depends_on:
+      - eureka-server
+      - produits-service
+      - avis-service
+
+volumes:
+  postgres-produits-data:
+  postgres-avis-data:

@@ -1,0 +1,12 @@
+**/target/
+**/*.class
+**/build/
+**/bin/
+**/out/
+**/node_modules/
+**/.idea/
+*.iml
+*.log
+*.db
+.DS_Store
+.env

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: produits-service
+  datasource:
+    url: jdbc:postgresql://postgres-produits:5432/produitsdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  redis:
+    host: redis
+    port: 6379
+  cache:
+    type: redis
+server:
+  port: 8091
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
