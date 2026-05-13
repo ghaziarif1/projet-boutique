@@ -14,8 +14,11 @@ spring:
   redis:
     host: redis
     port: 6379
+    timeout: 3000ms
   cache:
     type: redis
+    redis:
+      time-to-live: 600000
 server:
   port: 8091
 

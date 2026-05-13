@@ -7,16 +7,33 @@
 - **api-gateway** (port 8090) — Point d'entrée unique
 - **mobile-app** — Application mobile React Native / Expo
 
-## Prérequis
-- JDK 25+
-- Maven 3.9+
-- Docker Desktop
-- Node.js + npm (pour mobile-app)
-- Expo CLI (optionnel pour mobile-app)
+## Dépôt GitHub
+- Repository : https://github.com/ghaziarif1/projet-boutique
 
-## Lancer le projet (Docker Compose)
+## Branches
+- `version1` : parties 1 à 4
+- `version2` : parties 5 à 6, tests et mobile app
+
+## Prérequis
+- Docker Desktop
+- JDK 21+
+- Maven 3.9+
+- Node.js + npm
+
+## Exécution dans Docker (exigence professeur)
+Le projet est conçu pour s'exécuter entièrement via Docker Compose.
+Toutes les API back-end sont déployées par Docker Compose :
+- `postgres-produits`, `postgres-avis`, `redis`
+- `eureka-server`, `produits-service`, `avis-service`, `api-gateway`
+
+Lancer le projet :
 ```bash
-docker-compose up --build
+docker-compose up --build -d
+```
+
+Arrêter le projet :
+```bash
+docker-compose down
 ```
 
 ## Accès aux services
@@ -25,35 +42,36 @@ docker-compose up --build
 - Swagger produits : http://localhost:8091/swagger-ui.html
 - Swagger avis : http://localhost:8092/swagger-ui.html
 
-## Détails des microservices
-- **produits-service** : Spring Boot 4, PostgreSQL, Redis cache, Swagger UI.
-- **avis-service** : Spring Boot 4, PostgreSQL, Feign client pour validation produit, Swagger UI.
-- **api-gateway** : Spring Cloud Gateway avec routage vers produits-service et avis-service.
+## Tests
+### Tests Java
+```bash
+mvn -pl produits-service test
+```
 
-## Base de données
-- `postgres-produits` : base `produitsdb`
-- `postgres-avis` : base `avisdb`
+### Tests Cypress E2E
+```bash
+npm install
+npm run cy:run
+```
 
-## Application mobile
-Le client React Native utilise l'API Gateway pour :
-1. Récupérer les catégories (`GET /api/categories`)
-2. Lister les produits d'une catégorie (`GET /api/produits?categorieId={id}`)
-3. Afficher les avis d'un produit (`GET /api/avis/{produitId}`)
+## Mobile App
+L'application mobile React Native utilise uniquement l'API Gateway :
+- `GET /api/categories`
+- `GET /api/produits?categorieId={id}`
+- `GET /api/avis/{produitId}`
 
-### Exécution mobile
+Lancer l'application mobile :
 ```bash
 cd mobile-app
 npm install
 npm start
 ```
 
-## Tests (projets Spring Boot)
-- Unit tests : `produits-service/src/test/java/.../ProduitServiceTest.java`
-- Data JPA integration test : `produits-service/src/test/java/.../ProduitRepositoryIT.java`
+> Si vous utilisez un appareil Android réel ou un émulateur différent, mettez à jour l'URL de l'API dans `mobile-app/App.js` vers `http://<IP>:8090`.
 
-## Branches suggérées
-- `version1` : parties 1 à 4
-- `version2` : parties 5 à 6, tests et mobile app
-
-## Remarque
-Si vous utilisez un appareil Android réel ou un émulateur différent, mettez à jour l'URL de l'API dans `mobile-app/App.js` vers l'adresse IP de la machine hôte (`http://<IP>:8090`).
+## Notes techniques
+- `produits-service` utilise Redis cache sur `GET /api/produits` avec `@Cacheable` et invalide le cache sur `POST /api/produits` avec `@CacheEvict`
+- `avis-service` vérifie l'existence du produit via un `@FeignClient(name = "produits-service")`
+- L'API Gateway route les appels vers les services correspondants
+- Les tests d'intégration incluent Testcontainers PostgreSQL dans `produits-service`
+- Les tests E2E Cypress couvrent le parcours API Gateway

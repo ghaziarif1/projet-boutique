@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres-produits:
     image: postgres:15
@@ -25,7 +23,9 @@ services:
       - '6379:6379'
 
   eureka-server:
-    build: ./eureka-server
+    build:
+      context: .
+      dockerfile: ./eureka-server/Dockerfile
     ports:
       - '8761:8761'
     depends_on:
@@ -34,7 +34,9 @@ services:
       - redis
 
   produits-service:
-    build: ./produits-service
+    build:
+      context: .
+      dockerfile: ./produits-service/Dockerfile
     ports:
       - '8091:8091'
     depends_on:
@@ -43,7 +45,9 @@ services:
       - eureka-server
 
   avis-service:
-    build: ./avis-service
+    build:
+      context: .
+      dockerfile: ./avis-service/Dockerfile
     ports:
       - '8092:8092'
     depends_on:
@@ -51,7 +55,9 @@ services:
       - eureka-server
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
     ports:
       - '8090:8090'
     depends_on:
