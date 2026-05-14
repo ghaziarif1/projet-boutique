@@ -9,18 +9,18 @@ describe('API Gateway E2E', () => {
           expect(categories).to.be.an('array').and.not.be.empty;
 
           const categoryId = categories[0].id;
-          cy.request(`/api/produits?categorieId=${categoryId}`)
-            .its('status')
-            .should('eq', 200)
-            .then((productsResponse) => {
-              const products = productsResponse.body;
-              expect(products).to.be.an('array');
+          cy.request(`/api/produits?categorieId=${categoryId}`).then((productsResponse) => {
+            expect(productsResponse.status).to.eq(200);
+            const products = productsResponse.body;
+            expect(products).to.be.an('array');
 
-              if (products.length > 0) {
-                const produitId = products[0].id;
-                cy.request(`/api/avis/${produitId}`).its('status').should('eq', 200);
-              }
-            });
+            if (products.length > 0) {
+              const produitId = products[0].id;
+              cy.request(`/api/avis/${produitId}`).then((avisResponse) => {
+                expect(avisResponse.status).to.eq(200);
+              });
+            }
+          });
         });
       });
   });
