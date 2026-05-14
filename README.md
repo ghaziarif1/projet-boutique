@@ -20,7 +20,7 @@
 - Maven 3.9+
 - Node.js + npm
 
-## Exécution dans Docker (exigence professeur)
+## Exécution dans Docker
 Le projet est conçu pour s'exécuter entièrement via Docker Compose.
 Toutes les API back-end sont déployées par Docker Compose :
 - `postgres-produits`, `postgres-avis`, `redis`

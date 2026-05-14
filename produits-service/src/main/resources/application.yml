@@ -8,17 +8,32 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
   redis:
     host: redis
     port: 6379
-    timeout: 3000ms
+    timeout: 30000ms
+    connect-timeout: 30000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+      shutdown-timeout: 5000ms
   cache:
     type: redis
     redis:
       time-to-live: 600000
+  data:
+    redis:
+      repositories:
+        enabled: false
+    sql:
+    init:
+      mode: always
 server:
   port: 8091
 

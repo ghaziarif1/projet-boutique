@@ -3,15 +3,7 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      routes:
-        - id: produits-service
-          uri: lb://produits-service
-          predicates:
-            - Path=/api/produits/**,/api/categories/**
-        - id: avis-service
-          uri: lb://avis-service
-          predicates:
-            - Path=/api/avis/**
+      routes: []
 
 eureka:
   client:
